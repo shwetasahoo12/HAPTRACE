@@ -1,0 +1,214 @@
+---
+title: "Introduction to HAPTRACE"
+author: "Shweta Sahoo, Sara de las Heras-Saldana, Julius H. J. van der Werf, Mohammad H. Ferdosi"
+date: "`r Sys.Date()`"
+bibliography: ../inst/references.bib
+csl: ../inst/apa.csl
+citeproc: true
+output: 
+  rmarkdown::html_vignette:
+  css: custom.css
+vignette: >
+  %\VignetteIndexEntry{Introduction to HAPTRACE}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+::: {style="text-align: justify;"}
+In livestock breeding programs, genetically superior animals from multiple breeds are often selected and mated to enhance genetic merit and genetic diversity, resulting in an admixed population. The genomic prediction of an animal's genetic merit requires the use of pedigree and genotype information. Tracking breed-specific genomic segments from different populations is essential to characterise population admixture and assess the feasibility of the animal breeding program.
+
+The HAPTRACE package allows haplotype-based tracking in a simulated admixed population for the accurate estimation of breed composition [@sahoo2025ascertaining]. This package provides a wide range of applications, offering the capability to simulate complex animal breeding programs. Output files are provided in the format required for PLINK [@purcell_plink:_2007] and SNeP software [@barbato_snep:_2015], facilitating population diversity analysis. Additionally, this package allows the visualization of haplotypes, QTL effects, recombination and admixture to better describe the population.
+
+This vignette provides a small example of how to use HAPTRACE for simulating pure and admixed populations, as well as visualize the outputs.
+:::
+
+```{r setup}
+library(HAPTRACE)
+set.seed(1)
+```
+
+## Input data for simulating the population
+
+::: {style="text-align: justify;"}
+HAPTRACE supports three simulation modes, each differing in the source of the base population: 1) an internally generated base population; 2) a base population from QMSim outputs; or 3) use real genotype data as the starting point. However, to obtain the haplotype information, the user should ensure that the genotypes are phased. This vignette describes the internal simulation of a base population and its subsequent use in generating an admixed population.
+
+First, a MAP and QTL effects should be simulated using the functions `generateMAP` and `QTLeffects`, respectively. The MAP file includes information on marker ID, chromosome number and position, while the QTL effects file describes QTLID, chromosome number, QTL position and QTL effects. The `mapQTLfile` function must be used to combine QTL effects and markers to obtain the total number of markers. In real data analysis, SNP markers are often observed to be around the QTL. However, for simulation purposes in this package, the QTL position is included along with the map file to get a combined marker file. The output from the combined file will be used as input to generate a historical population.
+:::
+
+### Creating MAP and QTL file
+
+```{r}
+MAPfile <- generateMAP(nChr = 10, n_markers = 1000, len_Chr = 100)
+QTLfile <- QTLeffects(n_QTL_Chr = 10, nChr = 10, len_Chr = 100, effect_distribution = "gamma")
+
+MAP_QTL_Pop <- mapQTLfile(map = MAPfile, QTL = QTLfile)
+Effect <- as.vector(as.numeric(MAP_QTL_Pop$Effect))
+
+```
+
+### Creating a historical population
+
+::: {style="text-align: justify;"}
+After generating a combined MAP and QTL file, the function `generateHP` will generate haplotype information for the historical population across multiple generations, as described below. The historical population provides haplotype information for the base population. Users can define the number of sires and dams to mate and simulate the next generation of progenies, as well as the selection types (e.g. random, based on phenotypes or true breeding values). In this case, we opted for random selection for demonstration.
+:::
+
+```{r}
+Historical_Population <- generateHP(n_generations = 5, n_animals = 2000, 
+                                   map = MAP_QTL_Pop, nSire = 200, nDam = 500, 
+                                   nProgeny = 1000, mutationRate = 2.5 * 10^-5,
+                                   SelType = "random", Effect = Effect, nChr = 10, 
+                                   h2 = 0.3, trait_mean = 40, VarE = 0.6,recL = 10, 
+                                   minLength = 200)
+
+Sim_HP <- Historical_Population$Haplotype
+str(Sim_HP)
+class(Sim_HP)
+Sim_HP[1:10, 1:10]
+```
+
+::: {style="text-align: justify;"}
+Next, the historical population is divided into populations A and B for further simulation.
+
+After that, we can rescale the QTL effect according to the genomic information from the animals and the phenotypic standard deviation to obtain the desirable variance components for the simulated trait.
+:::
+
+```{r}
+Population_A <- Sim_HP[1:(nrow(Sim_HP)/2),]
+Population_B <- Sim_HP[(nrow(Sim_HP)/2 + 1):nrow(Sim_HP), ]
+
+EffectA <- Rescale(Haplotype = Population_A, Effect = Effect, Phenosd = 3, h2 = 0.3)
+```
+
+### Assigning of population code and haplotype recording
+
+::: {style="text-align: justify;"}
+To track the pedigree, we need to assign distinct codes to populations A and B, which will be reflected in the animals' ID. Similarly, the haplotypes of these two populations should be recoded to facilitate tracking them. In the following example, the resulting haplotype information was recoded from (0,1) to (-1,1) and (-2,2) for populations A and B, respectively.
+:::
+
+```{r}
+# Assignment of population code
+Population_A <- PopulationID(Population = Population_A, PopCode = "P1")
+Population_B <- PopulationID(Population = Population_B, PopCode = "P2")
+
+# Recode haplotype of populations A and B with 1 and 2, respectively
+Population_A <- Recode_Haplotype(df = Population_A, popBase = 1)
+Population_B <- Recode_Haplotype(df = Population_B, popBase = 2)
+```
+
+## Modelling the breeding program
+
+::: {style="text-align: justify;"}
+Populations A and B are simulated for 3 generations with different numbers of sires and dams assigned for random mating using `GenOnePopulation`. This function provides information on the pedigree, phenotypes, haplotypes coded according to the breed of origin, the original haplotype information, true breeding value and recombination points from sires and dams. The parameter `recL` defines the average number of recombinations per animal, which can be specified in the function. In addition to random selection, users can apply selection based on either phenotype or true breeding values.
+:::
+
+```{r}
+# Population A
+popA <- GenOnePopulation(ngenerations = 1, map = MAP_QTL_Pop,
+                         populationSim = Population_A, nSire = 20, nDam = 100,
+                         mutationRate = 2.5 * 10^-5, SelType = "random", 
+                         h2 = 0.3, trait_mean = 10, VarE = 0.6,Effect = Effect, 
+                         recL = 10, nChr = 10, minLength = 200, IndStartVal=1,
+                         prefixID = "A", nProgeny = 300)
+
+# Population B
+popB <- GenOnePopulation(ngenerations = 1, map = MAP_QTL_Pop,
+                         populationSim = Population_B, nSire = 10, nDam = 100,
+                         mutationRate = 2.5 * 10^-5, SelType = "random", 
+                         h2 = 0.3, trait_mean = 30, VarE = 0.6 ,Effect = Effect,
+                         recL = 10,nChr = 10, minLength = 200, IndStartVal=1,
+                         prefixID = "B", nProgeny = 300)
+
+# Simulation of a crossbred population derived from populations A and B
+```
+
+::: {style="text-align: justify;"}
+The animals from the last generation in populations A and B are crossed using the function `TwoPopCross` to get a crossbred population named F1Cross. The animals in this population were inter crossed further for the next 2 generations using `GenOnePopulation` function.
+:::
+
+```{r}
+# First cross between populations A and B
+F1Cross <- TwoPopCross(map = MAP_QTL_Pop, populationSim_A = popA$Haplotype,
+                       populationSim_B = popB$Haplotype, nSireA = 20, nDamA = 100,
+                       nSireB = 10, nDamB = 100, Sire_From = "A",
+                       mutationRate = 2.5 * 10^-5, SelType = "random", h2 = 0.3,
+                       trait_mean = 20,VarE_PopA = 0.6, VarE_PopB = 0.6, 
+                       Effect_PopA = Effect, Effect_PopB = Effect,
+                       IndStartVal = 1, prefixID = "F1C", nProgeny = 300, recL = 10, 
+                       nChr = 10, minLength = 200)
+```
+
+```{r}
+# Simulation of an admixed population
+F3 <- GenOnePopulation(ngenerations = 2, map = MAP_QTL_Pop,
+                       populationSim = F1Cross$Haplotype,
+                       nSire = 20,nDam = 100,mutationRate = 2.5 * 10^-5,
+                       SelType = "random",h2 = 0.3, trait_mean = 20,
+                       VarE = 0.6, Effect = Effect, recL = 10, 
+                       nChr = 10, minLength = 200, IndStartVal = 1,
+                       prefixID = "C2", nProgeny = 300)
+```
+
+::: {style="text-align: justify;"}
+Phenotype data can be extracted using `Ext_Pheno`, while `Ped_Pheno` provides both pedigree and phenotype information.
+:::
+
+```{r}
+# Extracting pedigree and phenotype
+F3Pheno = Ext_Pheno(df = F3$population)
+head(F3Pheno)
+F3Ped_Pheno = Ped_Pheno(Pedigree = F3$parents, Phenotype = F3Pheno)
+head(F3Ped_Pheno)
+```
+
+::: {style="text-align: justify;"}
+The function `Coded_to_Haplo` converts the coded haplotype into (0,1) format and `MakeGeno` converts haplotypes to genotype information in (0,1,2) format.
+:::
+
+```{r}
+# Extracting genotype information for F1Cross and F3 populations
+CBgenotype <- rbind(MakeGeno(Coded_to_Haplo(F1Cross$Haplotype)),
+                    MakeGeno(Coded_to_Haplo(F3$Haplotype)))
+CBgenotype[1:10, 1:10]
+# Coded haplotype for F1Cross and F3 populations
+CBHaplotype <- rbind(F1Cross$Haplotype,F3$Haplotype)
+CBHaplotype[1:10, 1:10]
+```
+
+## Visualization of an admixed population
+
+::: {style="text-align: justify;"}
+The coded haplotype information recorded in the F3 admixed population helps to determine the accurate breed composition. Various plot functions are included in this package to provide an overview of how genomic segments are inherited from different populations. The `plotHaplo` function offers a snippet of haplotype segments inherited from different populations, whereas `Admixplot` depicts the accurate breed composition of an admixed population, where x-axis shows the number of animals and y-axis shows the proportion from different populations in different colors.
+:::
+
+```{r, fig.cap=paste("Figure 1: Haplotype plot for crossbred animals obtained from `plotHaplo` function"), fig.width = 6, fig.height = 6}
+# Haplotype plot
+smallF3 <- F3$Haplotype[1:100, ]
+F3pAplot <- plotHaplo(Haplotype = smallF3, 
+                     colors = c("#CC79A7", "#0072B2"), 
+                     map = MAP_QTL_Pop, nChr = 10, 
+                     legendlabels = c("A", "B"))
+
+```
+
+```{r, fig.cap=paste("Figure 2: Admixture plot for crossbred animals obtained from `Admixplot` function"), fig.width = 6, fig.height = 6}
+# Admixture plot
+TBC <- trueBreedComp(Haplotype = smallF3)
+
+# Arrange the population
+TBC_data <- TBC[c(2,1), ]
+
+Admixplot(trueBC = TBC_data, 
+          color = c("#CC79A7", "#0072B2"),
+          legendlabels = c("A", "B"))
+```
+
+## References

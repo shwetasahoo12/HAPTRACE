@@ -1,0 +1,71 @@
+#' Read QMSim Marker/QTL Genotype File
+#'
+#' Efficiently reads a QMSim \code{p1_mrk_qtl_*.txt} genotype file using
+#' compiled C++ code (Rcpp) and returns a single integer matrix.
+#'
+#' @param file_path Character string. Path to the QMSim genotype file.
+#' @param geno_mode Character string controlling output layout.
+#'   One of:
+#'   \describe{
+#'     \item{\code{"haplotype"}}{(default) Two rows per individual
+#'       (paternal haplotype then maternal haplotype), values 0/1.
+#'       Matrix dimensions: \code{2*n_ind} rows x \code{n_loci} columns.
+#'       Genotype codes are decoded as:
+#'       \code{0} = 0|0, \code{2} = 1|1, \code{3} = 0|1, \code{4} = 1|0.
+#'       Code \code{1} (unphased het) is resolved deterministically using
+#'       \code{phase_seed}.
+#'       Both rows carry the animal ID as rowname.}
+#'     \item{\code{"allele"}}{One row per individual, raw genotype codes
+#'       (0-4) as they appear in the file.
+#'       Matrix dimensions: \code{n_ind} rows x \code{n_loci} columns.}
+#'   }
+#' @param phase_seed Integer seed for deterministic phasing of unphased
+#'   heterozygotes (code 1).  Only used when \code{geno_mode = "haplotype"}.
+#'   Default: 42.
+#'
+#' @return An integer matrix with rownames set to animal IDs.
+#'
+#' @details
+#' Each character in the QMSim genotype string represents one locus:
+#' \tabular{cccc}{
+#'   \strong{Code} \tab \strong{Genotype} \tab \strong{Paternal} \tab \strong{Maternal} \cr
+#'   0 \tab 0|0 \tab 0 \tab 0 \cr
+#'   1 \tab het (unphased) \tab ? \tab ? \cr
+#'   2 \tab 1|1 \tab 1 \tab 1 \cr
+#'   3 \tab 0|1 \tab 0 \tab 1 \cr
+#'   4 \tab 1|0 \tab 1 \tab 0
+#' }
+#'
+#' Lines ending with \code{>} are continuation lines and are concatenated
+#' automatically.
+#'
+#' @examples
+#' \dontrun{
+#' # Two 0/1 rows per individual (paternal / maternal haplotypes)
+#' hap <- read_qmsim_geno("p1_mrk_qtl_001.txt")
+#' dim(hap)        # 2*n_ind  x  n_loci
+#'
+#' # Raw genotype codes (0-4) as in the file
+#' geno <- read_qmsim_geno("p1_mrk_qtl_001.txt", geno_mode = "allele")
+#' dim(geno)       # n_ind  x  n_loci
+#' }
+#'
+#' @export
+#'
+#' @import Rcpp
+#' @import RcppArmadillo
+#' @useDynLib HAPTRACE, .registration = TRUE
+#'
+read_qmsim_geno <- function(file_path, geno_mode = "haplotype", phase_seed = 42L) {
+    if (!file.exists(file_path)) {
+        stop("File not found: ", file_path)
+    }
+    valid_modes <- c("haplotype", "allele")
+    if (!geno_mode %in% valid_modes) {
+        stop(
+            "Invalid geno_mode '", geno_mode, "'. ",
+            "Must be one of: ", paste(valid_modes, collapse = ", ")
+        )
+    }
+    .Call(`_HAPTRACE_read_qmsim_geno`, file_path, geno_mode, as.integer(phase_seed))
+}

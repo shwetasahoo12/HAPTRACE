@@ -1,0 +1,31 @@
+Package: HAPTRACE
+Title: Haplotype-Based Tracking of Admixed Population for Breed Composition Estimation
+Version: 0.1.0
+Authors@R: c(
+    person("Shweta", "Sahoo", , "queryhap01@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-5154-5719")),
+    person("Sara de las", "Heras-Saldana", role = "aut",
+           comment = c(ORCID = "0000-0002-8665-6160")),
+    person("Julius H. J.", "van der Werf", role = "aut",
+           comment = c(ORCID = "0000-0003-2512-1696")),
+    person("Mohammad H.", "Ferdosi", role = "aut",
+           comment = c(ORCID = "0000-0001-5385-4913"))
+  )
+Description: The HAPTRACE provides tools to simulate populations and track haplotypes to evaluate population admixture. It enables researchers to simulate admixture scenarios and keep haplotype traces over generations. The package supports customisable population parameters, including size, number of markers, mutation rates and recombination.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
+Imports: 
+    data.table,
+    gdata,
+    hsphase,
+    Rcpp,
+    RcppArmadillo
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
