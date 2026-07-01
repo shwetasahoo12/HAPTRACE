@@ -112,7 +112,7 @@ MakeGeno = function(df) {
   if (!is.matrix(df)) {
     stop("Haplotype information is not in matrix form")
   }
-  else if (nrow(df) %% 2 != 0) {
+  else if (base::nrow(df) %% 2 != 0) {
     stop("Haplotype matrix must have even rows")
   } else{
     G1 <- df[seq(1, nrow(df), by = 2), ]
@@ -148,7 +148,7 @@ TBV_Haplo = function(Haplotype, Effect) {
          Please check your marker file."
     )
   }
-  if (ncol(Haplotype) != length(Effect)) {
+  if (base::ncol(Haplotype) != length(Effect)) {
     stop("The number of SNP effects doesn't match the number of markers")
   }
   else if (!is.matrix(Haplotype) || !is.vector(Effect)) {
@@ -328,7 +328,7 @@ QTLeffects = function(n_QTL_Chr,
   }
   else if (missing(nChr)) {
     stop(
-      "Define the number of chromosomes. Please ensure that haploid number of chromosomes (N) are provided"
+      "Define the number of chromosomes. Please ensure that haploid number of chromosomes (N) are provided."
     )
   }
   else if (nChr > 50) {

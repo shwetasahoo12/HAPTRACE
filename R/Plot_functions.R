@@ -239,11 +239,20 @@ plotHaplo = function(Haplotype, colors, map, nChr, legendlabels) {
   if (!is.matrix(Haplotype)) {
     stop("Haplotype information is not in matrix form")
   }
+  if (base::nrow(Haplotype) < 2L){
+    stop("Haplotype matrix must have atleast two rows")
+  }
+  if (base::nrow(Haplotype) %% 2 != 0){
+    stop("Haplotype matrix must have even number of rows",
+         "(two per animal)")
+  }
   else if (missing(colors)) {
     stop("Define the colors per population")
   }
   else if (length(colors) != length(unique(c(abs(Haplotype))))) {
-    stop("The number of colors should match the number of populations")
+    message(paste("length(colors)",length(colors)))
+    message(paste("length(unique(c(abs(Haplotype)))",length(unique(c(abs(Haplotype))))))
+            stop("The number of colors should match the number of populations")
   }
   else if (missing(map)) {
     stop("Define the map file of the population")
