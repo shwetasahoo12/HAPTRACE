@@ -250,9 +250,8 @@ plotHaplo = function(Haplotype, colors, map, nChr, legendlabels) {
     stop("Define the colors per population")
   }
   else if (length(colors) != length(unique(c(abs(Haplotype))))) {
-    message(paste("length(colors)",length(colors)))
-    message(paste("length(unique(c(abs(Haplotype)))",length(unique(c(abs(Haplotype))))))
-            stop("The number of colors should match the number of populations")
+    stop(paste("The number of colors (", length(colors), ") should match the number of populations (", length(unique(c(abs(Haplotype)))), ")",
+               sep = ""))
   }
   else if (missing(map)) {
     stop("Define the map file of the population")
