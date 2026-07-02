@@ -221,6 +221,7 @@ recProbplot = function(recList, n_markers, col = "steelblue", map) {
 #' @export
 #'
 #' @importFrom graphics image axis mtext legend abline
+#' @importFrom utils capture.output
 #'
 #' @examples Haplotype <- matrix(data = sample(c(-1, 1, -2, 2, -3, 3), 100, replace = TRUE),
 #' nrow = 10, ncol = 10)
