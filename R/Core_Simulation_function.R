@@ -1,5 +1,6 @@
 #### Core functions of the simulation ####
 
+
 #' Add Recombination
 #'
 #' @description
@@ -23,7 +24,10 @@
 #' popGmap <- generateMAP(nChr = 2, n_markers = 5, len_Chr = 10)
 #' popGRec <- RecombinationPoint(map = popGmap, Haplotype = popG, recL = 2, nChr = 2)
 RecombinationPoint <- function(map, Haplotype, recL, nChr, recProb) {
-  if (missing(map))
+  if (.DISABLE_FUNCTIONS$RecombinationPoint) {
+    return(Haplotype)
+  }
+  else if (missing(map))
     stop("Please define the map file")
   if (missing(Haplotype))
     stop("Please define the Haplotype information of the animals")
@@ -72,9 +76,9 @@ RecombinationPoint <- function(map, Haplotype, recL, nChr, recProb) {
         cand_prob <- recProb[candidates]
         cand_prob <- cand_prob / sum(cand_prob)
         additional <- base::sample(candidates,
-                             n_draw,
-                             prob = cand_prob,
-                             replace = FALSE)
+                                   n_draw,
+                                   prob = cand_prob,
+                                   replace = FALSE)
       }
     } else {
       additional <- base::integer(0)
@@ -84,11 +88,6 @@ RecombinationPoint <- function(map, Haplotype, recL, nChr, recProb) {
   }
   list(recList = recList, nrec = nrec)
 }
-
-# At the TOP of the file
-.DISABLE_FUNCTIONS <- list(
-  MutationRate = TRUE
-)
 
 
 #' Adding Mutation
@@ -107,10 +106,7 @@ RecombinationPoint <- function(map, Haplotype, recL, nChr, recProb) {
 #' @examples popH <- matrix(data = sample(c(0,1), 60, replace = TRUE), nrow = 6, ncol = 10)
 #' popH_Mutation <- MutationRate(Haplotype = popH, rate = 2.5*10^-5)
 MutationRate <- function(Haplotype, rate) {
-  if (.DISABLE_FUNCTIONS$MutationRate) {
-    return(Haplotype)
-  }
-  else if (!is.matrix(Haplotype)) {
+  if (!is.matrix(Haplotype)) {
     stop("Haplotype information is not in matrix format")
   }
   ### Calculate number of mutations according to Haplotype ###
@@ -173,9 +169,11 @@ SireSample = function(Haplotype, nSire, nProgeny) {
     ## combined indices of the animals selected
     row_indices <- as.matrix(base::cbind(columnA, columnB))
     ### replicate randomly for the number of progeny
-    replication_num <- as.integer(base::diff(c(0, base::sort(base::sample(
-      1:(round(nProgeny) - 1), (nSire - 1)
-    )), round(nProgeny))))
+    replication_num <- as.integer(base::diff(c(
+      0, base::sort(base::sample(1:(
+        round(nProgeny) - 1
+      ), (nSire - 1))), round(nProgeny)
+    )))
     replication_num <- as.vector(replication_num)
     # replicate the row indices with randomized replication
     rep_sire <- row_indices[rep(1:nrow(row_indices), replication_num), ]
@@ -224,9 +222,11 @@ DamSample = function(Haplotype, nDam, nProgeny) {
     ## combined indices of the animals selected
     row_indices <- as.matrix(base::cbind(columnA, columnB))
     ### replicate randomly for the number of progeny
-    replication_num <- as.integer(base::diff(c(0, base::sort(base::sample(
-      1:(round(nProgeny) - 1), (nDam - 1)
-    )), round(nProgeny))))
+    replication_num <- as.integer(base::diff(c(
+      0, base::sort(base::sample(1:(
+        round(nProgeny) - 1
+      ), (nDam - 1))), round(nProgeny)
+    )))
     replication_num <- as.vector(replication_num)
     # replicate the row indices with randomized replication
     rep_dam <- row_indices[base::rep(1:nrow(row_indices), replication_num), ]
@@ -258,8 +258,10 @@ MatingPop = function(Sire, Dam) {
     stop("Both sire and dam haplotype information needs to be in matrix form")
   }
   else if (nrow(Sire) != nrow(Dam)) {
-    stop("Unequal numbers of sire and dam haplotype information.
-         Please check sire and dam information.")
+    stop(
+      "Unequal numbers of sire and dam haplotype information.
+         Please check sire and dam information."
+    )
   }
   #### get the next generation #####
   Progeny <- matrix(0, nrow = 2 * nrow(Sire), ncol =  ncol(Sire))
