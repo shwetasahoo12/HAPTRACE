@@ -191,6 +191,7 @@ The coded haplotype information recorded in the F3 admixed population helps to d
 
 ```{r, fig.cap=paste("Figure 1: Haplotype plot for crossbred animals obtained from `plotHaplo` function"), fig.width = 6, fig.height = 6}
 # Haplotype plot
+set.seed(10403)
 smallF3 <- F3$Haplotype[1:100, ]
 F3pAplot <- plotHaplo(Haplotype = smallF3, 
                      colors = c("#CC79A7", "#0072B2"), 

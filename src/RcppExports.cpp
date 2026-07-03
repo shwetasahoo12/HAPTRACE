@@ -25,8 +25,11 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP switchAdd(SEXP, SEXP, SEXP);
+
 static const R_CallMethodDef CallEntries[] = {
     {"_HAPTRACE_read_qmsim_geno", (DL_FUNC) &_HAPTRACE_read_qmsim_geno, 3},
+    {"switchAdd",                 (DL_FUNC) &switchAdd,                 3},
     {NULL, NULL, 0}
 };
 
