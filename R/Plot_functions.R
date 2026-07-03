@@ -251,8 +251,11 @@ plotHaplo = function(Haplotype, colors, map, nChr, legendlabels) {
     stop("Define the colors per population")
   }
   else if (length(colors) != length(unique(c(abs(Haplotype))))) {
+    seed_info <- if (exists(".Random.seed")) paste("Seed:", .Random.seed[1]) else "No seed set"
+
     stop(paste("The number of colors (", length(colors), ") should match the number of populations (", length(unique(c(abs(Haplotype)))), ")\n",
                paste(capture.output(table(abs(Haplotype))), collapse = "\n"),
+               "\n", seed_info,
                sep = ""))
   }
   else if (missing(map)) {

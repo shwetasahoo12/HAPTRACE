@@ -33,6 +33,7 @@ This vignette provides a small example of how to use HAPTRACE for simulating pur
 
 ```{r setup}
 library(HAPTRACE)
+set.seed(1)
 ```
 
 ## Input data for simulating the population
