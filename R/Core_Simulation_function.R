@@ -85,6 +85,11 @@ RecombinationPoint <- function(map, Haplotype, recL, nChr, recProb) {
   list(recList = recList, nrec = nrec)
 }
 
+# At the TOP of the file
+.DISABLE_FUNCTIONS <- list(
+  MutationRate = TRUE
+)
+
 
 #' Adding Mutation
 #'
@@ -102,7 +107,10 @@ RecombinationPoint <- function(map, Haplotype, recL, nChr, recProb) {
 #' @examples popH <- matrix(data = sample(c(0,1), 60, replace = TRUE), nrow = 6, ncol = 10)
 #' popH_Mutation <- MutationRate(Haplotype = popH, rate = 2.5*10^-5)
 MutationRate <- function(Haplotype, rate) {
-  if (!is.matrix(Haplotype)) {
+  if (.DISABLE_FUNCTIONS$MutationRate) {
+    return(Haplotype)
+  }
+  else if (!is.matrix(Haplotype)) {
     stop("Haplotype information is not in matrix format")
   }
   ### Calculate number of mutations according to Haplotype ###
