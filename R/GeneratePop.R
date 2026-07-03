@@ -179,15 +179,13 @@ PopSelect = function(map,
   ## Sire
   RecPointListS = RecombinationPoint(map, SireSelect, recL, nChr, recProb)
   RecSirelist = RecPointListS$recList
-  #SireSelectFinal <- addSwitch(SireSelect, RecSirelist, minLength)
-  SireSelectFinal <- SireSelect
+  SireSelectFinal <- addSwitch(SireSelect, RecSirelist, minLength)
   rownames(SireSelectFinal) = rownames(SireSelect)
 
   ##Dam
   RecPointListD = RecombinationPoint(map, DamSelect, recL, nChr, recProb)
   RecDamlist = RecPointListD$recList
-  #DamSelectFinal <- addSwitch(DamSelect, RecDamlist, minLength)
-  DamSelectFinal <- DamSelect
+  DamSelectFinal <- addSwitch(DamSelect, RecDamlist, minLength)
   rownames(DamSelectFinal) = rownames(DamSelect)
 
   ###### Selection of random gametes of sire and dam
