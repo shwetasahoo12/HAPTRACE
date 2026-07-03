@@ -24,10 +24,7 @@
 #' popGmap <- generateMAP(nChr = 2, n_markers = 5, len_Chr = 10)
 #' popGRec <- RecombinationPoint(map = popGmap, Haplotype = popG, recL = 2, nChr = 2)
 RecombinationPoint <- function(map, Haplotype, recL, nChr, recProb) {
-  if (.DISABLE_FUNCTIONS$RecombinationPoint) {
-    return(Haplotype)
-  }
-  else if (missing(map))
+  if (missing(map))
     stop("Please define the map file")
   if (missing(Haplotype))
     stop("Please define the Haplotype information of the animals")
