@@ -12,7 +12,7 @@ Authors@R: c(
            comment = c(ORCID = "0000-0001-5385-4913"))
   )
 Maintainer: Shweta Sahoo <queryhap01@gmail.com>
-Description: The HAPTRACE provides tools to simulate populations and track haplotypes to evaluate population admixture. It enables researchers to simulate admixture scenarios and keep haplotype traces over generations. The package supports customisable population parameters, including size, number of markers, mutation rates and recombination.
+Description: Simulate populations and track haplotypes over generations to evaluate population admixture. The package supports customisable population parameters, including size, number of markers, mutation rates and recombination.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

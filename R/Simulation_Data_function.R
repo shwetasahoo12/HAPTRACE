@@ -703,10 +703,11 @@ generateHP <- function(n_generations,
 #' @importFrom data.table fwrite as.data.table
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' pop_plink <- matrix(data = sample(c(0,1,2), 60, replace = TRUE), nrow = 6, ncol = 10)
-#' pop_plink <- PopulationID(Population = pop_plink, PopCode = "PP")
-#' plinkped(Genotype = pop_plink, AnimalID = rownames(pop_plink), filename = "pop")
+#' rownames(pop_plink) <- paste("PP", 1:nrow(pop_plink), sep = "_")
+#' output_path <- file.path(tempdir(), "pop")
+#' plinkped(Genotype = pop_plink, AnimalID = rownames(pop_plink), filename = output_path)
 #' }
 #'
 #'
@@ -767,12 +768,14 @@ plinkped <- function (Genotype, AnimalID, filename)
 #' @importFrom data.table fread fwrite
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' output_folder <- file.path(tempdir(), "map")
+#' dir.create(output_folder, showWarnings = FALSE, recursive = TRUE)
 #' QMSim_PlinkMAP(filepath = "lm_mrk_qtl_001.txt",
-#' outputpath = "ss/out", filename = "pop")
+#' outputpath = output_folder, filename = "pop")
 #' }
 #'
-QMSim_PlinkMAP = function(filepath = "lm_mrk_qtl_001.txt", outputpath, filename) {
+QMSim_PlinkMAP = function(filepath, outputpath, filename) {
   if (missing(filepath)) {
     stop("Please specify the file path where map file is saved")
   }
@@ -780,11 +783,14 @@ QMSim_PlinkMAP = function(filepath = "lm_mrk_qtl_001.txt", outputpath, filename)
   MAP$PositionR <- 0
   MAP$Physical_pos <- (MAP$Position) * 1000000
 
+  # Combine output_path and filename with .txt extension
+  output_path_file <- file.path(outputpath, paste0(filename, ".map"))
+
   ###Reposition the columns now in map file ###
   MAP_REVISED <- MAP[, c('Chr', 'ID', 'PositionR', 'Physical_pos')]
   data.table::fwrite(
     MAP_REVISED,
-    file = file.path(outputpath, paste0(filename, ".map")),
+    file = output_path_file,
     sep = " ",
     row.names = F,
     quote = F,
@@ -836,9 +842,11 @@ PopulationID = function(Population, PopCode) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' Geno <- matrix(data = sample(c(0,1,2), 100, replace = TRUE), nrow = 10, ncol = 10)
-#' Reformat_BLUPF90(Genodata = Geno, savefile = "genotype")
+#' rownames(Geno) <- paste("G", 1:nrow(Geno), sep = "_")
+#' output_path <- file.path(tempdir(), "genotype")
+#' Reformat_BLUPF90(Genodata = Geno, savefile = output_path)
 #' }
 #'
 Reformat_BLUPF90 = function(Genodata, savefile) {
