@@ -22,7 +22,7 @@ total number of SNP markers ,and QTL effects generated from ReadQTL function. It
 SNP effects of length of total number of markers along with QTLs.
 }
 \examples{
-\dontrun{
+\donttest{
 popQM <- read_qmsim_geno("p1_mrk_qtl_001.txt")
 QTL <- ReadQTL(filename = "effect_qtl_001.txt")
 QTLeffect <- CalQTLeffect(filename = "lm_mrk_qtl_001.txt",

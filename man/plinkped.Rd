@@ -22,10 +22,11 @@ Saving pedigree in ped file is in our plan for the update.
 Function to generate ped file for PLINK analysis.
 }
 \examples{
-\dontrun{
+\donttest{
 pop_plink <- matrix(data = sample(c(0,1,2), 60, replace = TRUE), nrow = 6, ncol = 10)
-pop_plink <- PopulationID(Population = pop_plink, PopCode = "PP")
-plinkped(Genotype = pop_plink, AnimalID = rownames(pop_plink), filename = "pop")
+rownames(pop_plink) <- paste("PP", 1:nrow(pop_plink), sep = "_")
+output_path <- file.path(tempdir(), "pop")
+plinkped(Genotype = pop_plink, AnimalID = rownames(pop_plink), filename = output_path)
 }
 
 

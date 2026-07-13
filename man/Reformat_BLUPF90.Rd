@@ -18,9 +18,11 @@ Returns a text file comprising of genotype data for its use in BLUPF90.
 Function to format genotype file for BLUPF90 analysis.
 }
 \examples{
-\dontrun{
+\donttest{
 Geno <- matrix(data = sample(c(0,1,2), 100, replace = TRUE), nrow = 10, ncol = 10)
-Reformat_BLUPF90(Genodata = Geno, savefile = "genotype")
+rownames(Geno) <- paste("G", 1:nrow(Geno), sep = "_")
+output_path <- file.path(tempdir(), "genotype")
+Reformat_BLUPF90(Genodata = Geno, savefile = output_path)
 }
 
 }

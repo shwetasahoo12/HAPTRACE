@@ -4,7 +4,7 @@
 \alias{QMSim_PlinkMAP}
 \title{Format PLINK MAP file from QMSim}
 \usage{
-QMSim_PlinkMAP(filepath = "lm_mrk_qtl_001.txt", outputpath, filename)
+QMSim_PlinkMAP(filepath, outputpath, filename)
 }
 \arguments{
 \item{filepath}{Map file generated from the QMSim.}
@@ -20,9 +20,11 @@ Returns a map file that can be used for PLINK analysis.
 Function to format map file from QMSim for PLINK analysis.
 }
 \examples{
-\dontrun{
+\donttest{
+output_folder <- file.path(tempdir(), "map")
+dir.create(output_folder, showWarnings = FALSE, recursive = TRUE)
 QMSim_PlinkMAP(filepath = "lm_mrk_qtl_001.txt",
-outputpath = "ss/out", filename = "pop")
+outputpath = output_folder, filename = "pop")
 }
 
 }
