@@ -51,7 +51,7 @@ Lines ending with \code{>} are continuation lines and are concatenated
 automatically.
 }
 \examples{
-\donttest{
+\dontrun{
 # Two 0/1 rows per individual (paternal / maternal haplotypes)
 hap <- read_qmsim_geno("p1_mrk_qtl_001.txt")
 dim(hap)        # 2*n_ind  x  n_loci

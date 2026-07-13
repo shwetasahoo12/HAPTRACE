@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' QTLfile <- ReadQTL(filename = "effect_qtl_001.txt")
 #' }
 #'
@@ -52,7 +52,7 @@ ReadQTL = function(filename) {
 #' @importFrom utils read.table
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' popQM <- read_qmsim_geno("p1_mrk_qtl_001.txt")
 #' QTL <- ReadQTL(filename = "effect_qtl_001.txt")
 #' QTLeffect <- CalQTLeffect(filename = "lm_mrk_qtl_001.txt",

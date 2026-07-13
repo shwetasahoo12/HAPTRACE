@@ -17,7 +17,7 @@ This function reads the effect file generated from QMSim with the file prefix "e
 It generates the effects for the defined QTLs in QMSim.
 }
 \examples{
-\donttest{
+\dontrun{
 QTLfile <- ReadQTL(filename = "effect_qtl_001.txt")
 }
 

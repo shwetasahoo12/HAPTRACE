@@ -768,7 +768,7 @@ plinkped <- function (Genotype, AnimalID, filename)
 #' @importFrom data.table fread fwrite
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' output_folder <- file.path(tempdir(), "map")
 #' dir.create(output_folder, showWarnings = FALSE, recursive = TRUE)
 #' QMSim_PlinkMAP(filepath = "lm_mrk_qtl_001.txt",
