@@ -21,6 +21,7 @@ Function to format map file from QMSim for PLINK analysis.
 }
 \examples{
 \dontrun{
+# This example is not executed since it needs large files.
 output_folder <- file.path(tempdir(), "map")
 dir.create(output_folder, showWarnings = FALSE, recursive = TRUE)
 QMSim_PlinkMAP(filepath = "lm_mrk_qtl_001.txt",

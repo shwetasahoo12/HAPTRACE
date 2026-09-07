@@ -41,6 +41,7 @@
 #'
 #' @examples
 #' \dontrun{
+#' # This example is not executed since it needs large files.
 #' # Two 0/1 rows per individual (paternal / maternal haplotypes)
 #' hap <- read_qmsim_geno("p1_mrk_qtl_001.txt")
 #' dim(hap)        # 2*n_ind  x  n_loci

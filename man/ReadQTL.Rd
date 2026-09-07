@@ -18,6 +18,7 @@ It generates the effects for the defined QTLs in QMSim.
 }
 \examples{
 \dontrun{
+# This example is not executed since it needs large files.
 QTLfile <- ReadQTL(filename = "effect_qtl_001.txt")
 }
 

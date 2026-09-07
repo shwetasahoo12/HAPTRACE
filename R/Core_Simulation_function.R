@@ -59,7 +59,7 @@ RecombinationPoint <- function(map, Haplotype, recL, nChr, recProb) {
     }
     ## For subsequent chromosomes :swap at start if
     ## different from previous chromosome
-    for (k in 2:nChr) {
+    for (k in seq_len(nChr)[-1]) {
       if (strand_choice[k] != strand_choice[k - 1]) {
         assortment_swaps <- c(assortment_swaps, chr_starts[k])
       }
