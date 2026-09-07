@@ -27,6 +27,7 @@ below:
 
 ``` r
 ## Example simulation
+library(HAPTRACE)
 vignette("Introduction_HAPTRACE", package = "HAPTRACE")
 #> Warning: vignette 'Introduction_HAPTRACE' not found
 ```
