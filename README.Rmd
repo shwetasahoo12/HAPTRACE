@@ -31,7 +31,7 @@ To see the example simulation of the package, refer to the vignette below:
 ```{r example}
 ## Example simulation
 library(HAPTRACE)
-vignette("Introduction_HAPTRACE", package = "HAPTRACE")
+vignette("Introduction_HAPTRACE")
 ```
 
 ## Citation
