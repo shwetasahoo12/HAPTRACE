@@ -27,7 +27,7 @@ below:
 
 ``` r
 ## Example simulation
-vignette("Introduction_HAPTRACE")
+vignette("Introduction_HAPTRACE", package = "HAPTRACE")
 #> Warning: vignette 'Introduction_HAPTRACE' not found
 ```
 

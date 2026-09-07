@@ -30,7 +30,7 @@ To see the example simulation of the package, refer to the vignette below:
 
 ```{r example}
 ## Example simulation
-vignette("Introduction_HAPTRACE")
+vignette("Introduction_HAPTRACE", package = "HAPTRACE")
 ```
 
 ## Citation
