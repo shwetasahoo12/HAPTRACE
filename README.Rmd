@@ -20,8 +20,8 @@ Haplotype-Based Tracking of Admixed Population for Breed Composition Estimation 
 The github repository contains the recent version of HAPTRACE (0.1.2). You can install the development version of HAPTRACE from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("pak")
-pak::pak("shwetasahoo12/HAPTRACE")
+#install.packages("remotes")
+remotes::install_github("shwetasahoo12/HAPTRACE", build_vignettes = TRUE)
 ```
 
 ## Example

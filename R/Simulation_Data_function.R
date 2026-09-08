@@ -664,7 +664,7 @@ generateHP <- function(n_generations,
 
       ##### Recent population is foundation for next generation
       rownames(OnlyF1) <- rep(Parents$AnimID, each = 2)
-      populationSim <- OnlyF1
+      HP <- OnlyF1
       F1Haplotype[[generation]] <- OnlyF1
       PopInfo[[generation]] <- PopInfodata
       recSire[[generation]] <- recpointSire

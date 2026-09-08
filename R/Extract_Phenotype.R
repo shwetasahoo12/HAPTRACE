@@ -27,7 +27,7 @@ Ext_Pheno = function(df){
   df2Pheno = as.data.frame(df2Pheno)
   df2Pheno$AnimID = ID
   ## Arrange the df
-  df3 = df2Pheno[, c(3,1,2)]
+  df3 = df2Pheno[, c('AnimID', 'TBV', 'phenotype')]
   return(df3)
 }
 
